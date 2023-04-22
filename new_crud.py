@@ -1,20 +1,32 @@
 from flask import Flask, jsonify, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import requests
+import json
+from collections import defaultdict
 
 # create Flask app
 app = Flask(__name__)
 
-# connect to MongoDB server
 # Connect to MongoDB
 client = MongoClient("mongodb://127.0.0.1:27017/", connect=False)
 db = client["mydb"]
 collection = db["curr"]
+infoset = defaultdict()
 
-# define endpoints for CRUD operations
+# Connect to Carbon API
+url = "https://www.carboninterface.com/api/v1/estimates"
+api_key = "VsmxxeigkWZ1LC3qKZMuA"
+api_key = "Bearer "+api_key
 
-# create document
-@app.route('/documents/insert', methods=['POST'])
+headers = {
+    "Authorization": api_key,
+    "Content-Type": "application/json"
+}
+
+# Define user operation
+# Create new user
+@app.route('/users/createUser', methods=['POST'])
 def create_document():
     data = request.json
     data['_id'] = ObjectId(data['_id'])
@@ -22,15 +34,15 @@ def create_document():
     return jsonify({'message': 'Document created', 'id': str(result.inserted_id)})
 
 # read 10 random documents
-@app.route('/documents', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def read_rand10_documents():
     documents = list(collection.find().limit(10))
     for d in documents:
         d['_id'] = str(d['_id'])
     return jsonify({'documents': documents})
 
-# read document by ID
-@app.route('/documents/<id>', methods=['GET'])
+# read user data
+@app.route('/users/<id>', methods=['GET'])
 def read_document(id):
     document = collection.find_one({'_id': ObjectId(id)})
     if document:
@@ -39,8 +51,8 @@ def read_document(id):
     else:
         return jsonify({'message': 'Document not found'})
 
-# update document
-@app.route('/documents/<id>', methods=['PUT'])
+# update userdata
+@app.route('/users/<id>', methods=['PUT'])
 def update_document(id):
     data = request.json
     data['_id'] = ObjectId(data['_id'])
@@ -51,7 +63,7 @@ def update_document(id):
         return jsonify({'message': 'Document not found'})
 
 # delete document
-@app.route('/documents/<id>', methods=['DELETE'])
+@app.route('/users/<id>', methods=['DELETE'])
 def delete_document(id):
     new_id = ObjectId(id)
     result = collection.delete_one({'_id': new_id})
@@ -59,6 +71,31 @@ def delete_document(id):
         return jsonify({'message': 'Document deleted'})
     else:
         return jsonify({'message': 'Document not found'})
+
+
+# Define type operations
+# Create electricity type operations for the user
+collec_type = db["type"]
+infoset["transport"] = {"Car":10,"Bus":20,"Flight":30}
+infoset["devices"] = {"AC":10,"Phone":20,"Heater":30}
+
+
+def calcCarbonEmission(input_data):
+    if(input_data['type'] == "transport"):
+        return input_data['usage'] * infoset[input_data['type']][input_data['vehicle']]
+    elif(input_data['type'] == "devices"):
+        return input_data['usage'] * infoset[input_data['type']][input_data['item']]
+    else:
+        return -1
+
+@app.route('/users/addTransportEntry', methods=['POST'])
+def create_transport_entry():
+    data = request.json
+    ret = calcCarbonEmission(data)
+    data[0]['co2'] = ret
+    resp = collec_type.insert_one(data)
+    return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
+
 
 # start Flask app
 if __name__ == '__main__':
