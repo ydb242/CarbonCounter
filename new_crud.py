@@ -15,7 +15,8 @@ cors=CORS(app)
 #app = Flask(__name__)
 
 # Connect to MongoDB
-client = MongoClient("mongodb://127.0.0.1:27017/", connect=False)
+uri = "mongodb+srv://carbon:ciOLM5D2lqAKUkeO@cluster0.doqtoku.mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(uri, connect=False)
 db = client["mydb"]
 collection = db["curr"]
 infoset = defaultdict()
