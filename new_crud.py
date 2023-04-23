@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 import requests
 import json
 from collections import defaultdict
-import time
+import datetime
 from flask_cors import CORS
 
 # create Flask app
@@ -106,7 +106,8 @@ def create_transport_entry():
     data = request.json
     ret = calcCarbonEmission(data)
     data['co2'] = ret
-    time_stamp = time.time()
+
+    time_stamp = datetime.datetime.now()
     data['ts'] = time_stamp
     resp = collec_type.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
