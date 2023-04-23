@@ -88,8 +88,8 @@ def delete_document(id):
 # Define type operations
 # Create electricity type operations for the user
 collec_type = db["type"]
-infoset["transport"] = {"Car":10,"Bus":20,"Flight":30}
-infoset["devices"] = {"AC":10,"Phone":20,"Heater":30}
+infoset["transport"] = {"car":10,"bus":20,"flight":30}
+infoset["devices"] = {"ac":10,"phone":20,"heater":30}
 
 
 def calcCarbonEmission(input_data):
