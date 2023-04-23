@@ -174,7 +174,7 @@ def retTimeSeriesData():
         temp = r['dateString']
         nt = temp.split('-')[2]
         rett['a'].append(nt)
-        rett['b'].append(r['total'])
+        rett['b'].append(r['total']//70)
     return jsonify({rett})
 
 # start Flask app
