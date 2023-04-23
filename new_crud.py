@@ -104,7 +104,7 @@ def calcCarbonEmission(input_data):
 def create_transport_entry():
     data = request.json
     ret = calcCarbonEmission(data)
-    data[0]['co2'] = ret
+    data['co2'] = ret
     resp = collec_type.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
 
