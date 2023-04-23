@@ -6,7 +6,11 @@ import json
 from collections import defaultdict
 import datetime
 from flask_cors import CORS
+<<<<<<< Updated upstream
 from datetime import datetime, timezone
+=======
+
+>>>>>>> Stashed changes
 
 # create Flask app
 app = Flask(__name__)
@@ -122,10 +126,15 @@ def retUserRewards(email):
     else:
         return jsonify({"message":"No User Found"})
 
-pipeline = [
+
+
+@app.route('/users/getTimeSeriesData', methods=['GET'])
+def retTimeSeriesData():
+    em = request.args.get('email')
+    pipeline = [
     {
         '$match': {
-            'email': 'matainilesh678@gmail.com',
+            'email': em,
             'ts': {
                 '$gte': datetime(2023, 4, 18, 0, 0, 0, tzinfo=timezone.utc),
                 '$lte': datetime(2023, 4, 23, 0, 0, 0, tzinfo=timezone.utc)
@@ -158,10 +167,7 @@ pipeline = [
             'date': 1
         }
     }
-]
-
-@app.route('/users/getTimeSeriesData', methods=['GET'])
-def retTimeSeriesData():
+    ]
     res = collec_type.aggregate(pipeline)
     return jsonify({"result":res})
 
