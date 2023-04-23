@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 import requests
 import json
 from collections import defaultdict
-
+import time
 from flask_cors import CORS
 
 # create Flask app
@@ -106,6 +106,8 @@ def create_transport_entry():
     ret = calcCarbonEmission(data)
     data['co2'] = ret
     resp = collec_type.insert_one(data)
+    time_stamp = time.time()
+    data['ts'] = time_stamp
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
 
 @app.route('/users/getDailyLimit', methods=['GET'])
