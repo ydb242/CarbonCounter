@@ -5,6 +5,12 @@ import requests
 import json
 from collections import defaultdict
 
+from flask_cors import CORS
+
+# create Flask app
+app = Flask(__name__)
+cors=CORS(app)
+
 # create Flask app
 app = Flask(__name__)
 
