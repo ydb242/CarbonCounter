@@ -6,11 +6,7 @@ import json
 from collections import defaultdict
 import datetime
 from flask_cors import CORS
-<<<<<<< Updated upstream
 from datetime import datetime, timezone
-=======
-
->>>>>>> Stashed changes
 
 # create Flask app
 app = Flask(__name__)
