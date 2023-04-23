@@ -27,11 +27,11 @@ headers = {
 
 # Define user operation
 # Create new user
-@app.route('/users/createUser', methods=['POST'])
+@app.route('/users/create', methods=['POST'])
 def create_document():
     data = request.json
-    data['_id'] = ObjectId(data['_id'])
     data['rewards'] = 0
+    data['total_consumption'] = 0
     result = collection.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(result.inserted_id)})
 
