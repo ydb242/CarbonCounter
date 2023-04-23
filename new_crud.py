@@ -165,7 +165,8 @@ def retTimeSeriesData():
     }
     ]
     res = collec_type.aggregate(pipeline)
-    return jsonify({"result":res})
+    print(type(res))
+    return res
 
 # start Flask app
 if __name__ == '__main__':
