@@ -112,9 +112,10 @@ def create_transport_entry():
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
 
 
-@app.route('/users/getImpInfo/<email>', methods=['GET'])
+@app.route('/users/getImpInfo', methods=['GET'])
 def retUserRewards(email):
-    document = collection.find_one({'email': email})
+    em = request.args.get('email')
+    document = collection.find_one({'email': em})
     if document:
         return jsonify({"reward" :document['rewards']})
     else:
