@@ -121,6 +121,48 @@ def retUserRewards(email):
     else:
         return jsonify({"message":"No User Found"})
 
+pipeline = [
+    {
+        '$match': {
+            'email': 'matainilesh678@gmail.com',
+            'ts': {
+                '$gte': datetime(2023, 4, 18, 0, 0, 0, tzinfo=timezone.utc),
+                '$lte': datetime(2023, 4, 23, 0, 0, 0, tzinfo=timezone.utc)
+            }
+        }
+    }, {
+        '$group': {
+            '_id': {
+                '$dateToString': {
+                    'format': '%Y-%m-%d',
+                    'date': '$ts'
+                }
+            },
+            'total': {
+                '$sum': '$co2'
+            }
+        }
+    }, {
+        '$project': {
+            'dateString': '$_id',
+            'date': {
+                '$dateFromString': {
+                    'dateString': '$_id',
+                    'format': '%Y-%m-%d'
+                }
+            }
+        }
+    }, {
+        '$sort': {
+            'date': 1
+        }
+    }
+]
+
+@app.route('/users/getTimeSeriesData', methods=['GET'])
+def retTimeSeriesData():
+    res = collec_type.aggregate(pipeline)
+    return jsonify({"result":res})
 
 # start Flask app
 if __name__ == '__main__':
