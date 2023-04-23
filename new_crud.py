@@ -151,6 +151,7 @@ def retTimeSeriesData():
     }, {
         '$project': {
             'dateString': '$_id',
+            'total' :1,
             'date': {
                 '$dateFromString': {
                     'dateString': '$_id',
@@ -165,7 +166,16 @@ def retTimeSeriesData():
     }
     ]
     res = collec_type.aggregate(pipeline)
-    return jsonify(list(res))
+    rett = defaultdict()
+    rett['a'] = []
+    rett['b'] = []
+
+    for r in res:
+        temp = r['dateString']
+        nt = temp.split('-')[2]
+        rett['a'].append(nt)
+        rett['b'].append(r['total'])
+    return jsonify({rett})
 
 # start Flask app
 if __name__ == '__main__':
