@@ -106,9 +106,9 @@ def create_transport_entry():
     data = request.json
     ret = calcCarbonEmission(data)
     data['co2'] = ret
-    resp = collec_type.insert_one(data)
     time_stamp = time.time()
     data['ts'] = time_stamp
+    resp = collec_type.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
 
 @app.route('/users/getDailyLimit', methods=['GET'])
