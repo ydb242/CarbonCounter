@@ -13,6 +13,7 @@ client = MongoClient("mongodb://127.0.0.1:27017/", connect=False)
 db = client["mydb"]
 collection = db["curr"]
 infoset = defaultdict()
+daily_limit = 2000
 
 # Connect to Carbon API
 url = "https://www.carboninterface.com/api/v1/estimates"
@@ -30,6 +31,7 @@ headers = {
 def create_document():
     data = request.json
     data['_id'] = ObjectId(data['_id'])
+    data['rewards'] = 0
     result = collection.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(result.inserted_id)})
 
@@ -88,13 +90,25 @@ def calcCarbonEmission(input_data):
     else:
         return -1
 
-@app.route('/users/addTransportEntry', methods=['POST'])
+@app.route('/users/addEntry', methods=['POST'])
 def create_transport_entry():
     data = request.json
     ret = calcCarbonEmission(data)
     data[0]['co2'] = ret
     resp = collec_type.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
+
+@app.route('/users/getDailyLimit', methods=['GET'])
+def retDailyLimitValue():
+    return daily_limit
+
+@app.route('/users/getRewards/<id>', methods=['GET'])
+def retUserRewards(id):
+    document = collection.find_one({'_id': ObjectId(id)})
+    if document:
+        return jsonify({"reward" :document['rewards']})
+    else:
+        return jsonify({"message":"No User Found"})
 
 
 # start Flask app
