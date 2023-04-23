@@ -20,7 +20,6 @@ client = MongoClient(uri, connect=False)
 db = client["mydb"]
 collection = db["curr"]
 infoset = defaultdict()
-daily_limit = 2000
 
 # Connect to Carbon API
 url = "https://www.carboninterface.com/api/v1/estimates"
@@ -112,13 +111,10 @@ def create_transport_entry():
     resp = collec_type.insert_one(data)
     return jsonify({'message': 'Document created', 'id': str(resp.inserted_id)})
 
-@app.route('/users/getDailyLimit', methods=['GET'])
-def retDailyLimitValue():
-    return daily_limit
 
-@app.route('/users/getRewards/<id>', methods=['GET'])
-def retUserRewards(id):
-    document = collection.find_one({'_id': ObjectId(id)})
+@app.route('/users/getImpInfo/<email>', methods=['GET'])
+def retUserRewards(email):
+    document = collection.find_one({'email': email})
     if document:
         return jsonify({"reward" :document['rewards']})
     else:
