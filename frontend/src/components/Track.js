@@ -1,3 +1,4 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -13,58 +14,69 @@ export default function Track() {
     ["Type", "Transport", "Devices"],
   ]);
   const [val, setVal] = useState(0);
+  const { user, isAuthenticated, isLoading } = useAuth0();
+
+  function onSubmit(params) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    };
+    fetch("http://54.224.229.31:5000/users/addEntry", requestOptions)
+      .then((response) => console.log(response.json()));
+
+  }
 
   function onSelect(params) {
-    console.log(params, params.target.value);
+    console.log("params", params.target.value);
     let newfield = [];
     switch (params.target.value) {
       case "devices":
         console.log("before devices", current);
 
         if (current != "type") {
-            var arr = selectedValues;
-            arr.splice(1, (selectedValues.length)-1);
-            setSelectedValues(arr);
-            console.log("change",selectedValues);
+          var arr = selectedValues;
+          arr.splice(1, selectedValues.length - 1);
+          setSelectedValues(arr);
+          console.log("change", selectedValues);
         }
-          data = {};
-          type = "devices";
-          newfield = ["Choose a Device", "AC", "Phone", "Heater"];
-          data["type"] = "devices";
-          console.log(data);
-        
+        data = {};
+        type = "devices";
+        newfield = ["Choose a Device", "AC", "Phone", "Heater"];
+        data["type"] = "devices";
+        console.log(data);
+
         break;
 
       case "transport":
         console.log("before transport", current);
         if (current != "type") {
           var arr = selectedValues;
-          arr.splice(1, (selectedValues.length)-1);
+          arr.splice(1, selectedValues.length - 1);
 
           // arr.splice(arr.length-1, 1);
           setSelectedValues(arr);
-          console.log("change",selectedValues);
+          console.log("change", selectedValues);
+        }
+        data = {};
 
-      }
-          data = {};
+        data["type"] = "transport";
+        type = "transport";
 
-          data["type"] = "transport";
-          type = "transport";
-
-          newfield = ["Choose a Vehicle", "Car", "Bus", "Flight"];
-          console.log(data);
+        newfield = ["Choose a Vehicle", "Car", "Bus", "Flight"];
+        console.log(data);
         break;
 
       case "car":
       case "bus":
       case "flight":
-        data["vehicle"] = current;
+        data["vehicle"] = params.target.value;
         break;
 
       case "ac":
       case "phone":
       case "heater":
-        data["devices"] = current;
+        data["item"] = params.target.value;
         break;
 
       default:
@@ -74,7 +86,7 @@ export default function Track() {
 
     console.log("after", current);
     setSelectedValues([...selectedValues, newfield]);
-    console.log("change end",selectedValues);
+    console.log("change end", selectedValues);
     setVal(0);
 
     // current = params.target.value
@@ -173,7 +185,9 @@ export default function Track() {
               name="Submit"
               onClick={(e) => {
                 data["usage"] = parseFloat(val);
-                console.log(data);
+                data["email"] = user.email;
+
+                onSubmit();
               }}
             />{" "}
           </Link>

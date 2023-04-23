@@ -7,16 +7,18 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Track from "./components/Track";
 import Submitted from "./components/Submitted";
 import Dashboard from "./components/Dashboard";
+import { useAuth0 } from "@auth0/auth0-react";
+import LoaderPage from "./components/LoaderPage";
 
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route path="/getstarted" element={<GetStartedPage />}></Route>
-        <Route path="/track" element={<Track/>}></Route>
-        <Route path="/submitted" element={<Submitted/>}></Route>
-        <Route path="/dashboard" element={<Dashboard/>}></Route>
-
+        <Route path="/track" element={<Track />}></Route>
+        <Route path="/submitted" element={<Submitted />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/loader" element={<LoaderPage />}></Route>
 
 
         <Route path="/" element={<HomePage />}></Route>
@@ -25,14 +27,22 @@ function App() {
   );
 }
 
-
 function HomePage() {
+  const { user, isAuthenticated, isLoading } = useAuth0();
+
   return (
     <div>
       <div className="heading">Let’s Decrease the Carbon Footprint</div>
-      <Link to="/getstarted" style={{ textDecoration: "none" }}>
-        <OrangeButton name="Get Started" />
-      </Link>
+      {console.log(user, isAuthenticated, isLoading)}
+      {isAuthenticated && !isLoading ? (
+        <Link to="/track" style={{ textDecoration: "none" }}>
+          <OrangeButton name="Get Started" />
+        </Link>
+      ) : (
+        <Link to="/getstarted" style={{ textDecoration: "none" }}>
+          <OrangeButton name="Get Started" />
+        </Link>
+      )}
 
       <img style={{ position: "absolute", left: 0, bottom: 0 }} src={earth} />
     </div>

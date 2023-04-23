@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import LoginButton from "./Login";
 import OrangeButton from "./OrangeButton";
 
 const rectStyle = {
@@ -10,7 +11,7 @@ const rectStyle = {
   background:
     "linear-gradient(180deg, rgba(17, 89, 118, 0.97) -3.55%, rgba(19, 77, 100, 0.81) 100%)",
   boxShadow: "0 4px 80px rgba(0, 0, 0, 0.18)",
-  borderRadius: 40,
+  borderRadius: 45,
 };
 
 const getstarted = {
@@ -35,9 +36,12 @@ export default function GetStartedPage() {
     >
       <div style={rectStyle}>
         <div style={getstarted}>Get Started</div>
-        <Link to="/track" style={{ textDecoration: "none" }}>
-        <OrangeButton name="Google" />
-      </Link>
+        <div style={{marginTop:40}}>
+          {/* <Link to="/track" style={{ textDecoration: "none" }}>
+            <OrangeButton name="Google" />
+          </Link> */}
+          <LoginButton/>
+        </div>
       </div>
     </div>
   );
